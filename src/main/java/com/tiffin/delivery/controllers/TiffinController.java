@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin @RestController @RequestMapping("/api/tiffin")
@@ -73,6 +74,12 @@ public class TiffinController {
     public ResponseEntity<BasicResponseDTO<TiffinPlan>> updateTiffinPlan(@PathVariable(value = "tiffinId") Long tiffinId){
         tiffinPlanDAO.deleteById(tiffinId);
         return new ResponseEntity<>(new BasicResponseDTO<>(true, "Record deleted", null), HttpStatus.CREATED);
+    }
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping( "/all")
+    public ResponseEntity<BasicResponseDTO<List<TiffinPlan>>> getAllTiffinPlan(){
+        List<TiffinPlan> tiffinPlans=  tiffinPlanDAO.findAll();
+        return new ResponseEntity<>(new BasicResponseDTO<>(true, "Records", tiffinPlans), HttpStatus.CREATED);
     }
 
 }
