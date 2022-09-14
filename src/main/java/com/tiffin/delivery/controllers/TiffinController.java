@@ -1,10 +1,14 @@
 package com.tiffin.delivery.controllers;
 
 import com.tiffin.delivery.dao.AddressDAO;
+import com.tiffin.delivery.dao.OrderDAO;
+import com.tiffin.delivery.dao.PaymentDAO;
 import com.tiffin.delivery.dao.TiffinPlanDAO;
 import com.tiffin.delivery.dto.BasicResponseDTO;
 import com.tiffin.delivery.dto.SaveTiffinPlanRequestDTO;
 import com.tiffin.delivery.models.Address;
+import com.tiffin.delivery.models.Payment;
+import com.tiffin.delivery.models.TiffinOrder;
 import com.tiffin.delivery.models.TiffinPlan;
 import com.tiffin.delivery.services.FilesStorageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +36,10 @@ public class TiffinController {
 
     @Autowired
     AddressDAO addressDAO;
+    @Autowired
+    PaymentDAO paymentDAO;
+    @Autowired
+    OrderDAO orderDAO;
 
     @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/save", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -67,19 +76,26 @@ public class TiffinController {
         if(fileName.isPresent())
             tiffinPlan.setBannerUrl(filesUrl+fileName.get());
         tiffinPlanDAO.save(tiffinPlan);
-        return new ResponseEntity<>(new BasicResponseDTO<>(true, "Record updated", tiffinPlan), HttpStatus.CREATED);
+        return new ResponseEntity<>(new BasicResponseDTO<>(true, "Record updated", tiffinPlan), HttpStatus.OK);
     }
     @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping( "/delete/{tiffinId}")
+    @Transactional
     public ResponseEntity<BasicResponseDTO<TiffinPlan>> updateTiffinPlan(@PathVariable(value = "tiffinId") Long tiffinId){
-        tiffinPlanDAO.deleteById(tiffinId);
-        return new ResponseEntity<>(new BasicResponseDTO<>(true, "Record deleted", null), HttpStatus.CREATED);
+        Optional<TiffinPlan> _tiffinPlan = tiffinPlanDAO.findById(tiffinId);
+        if (_tiffinPlan.isPresent()){
+            Optional<TiffinOrder> _tiffinOrder = orderDAO.findByTiffinPlan(_tiffinPlan.get());
+            paymentDAO.deleteByTiffinOrder(_tiffinOrder.get());
+            orderDAO.deleteByTiffinPlan(_tiffinPlan.get());
+//            tiffinPlanDAO.deleteById(tiffinId);
+        }
+        return new ResponseEntity<>(new BasicResponseDTO<>(true, "Record deleted", null), HttpStatus.OK);
     }
     @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping( "/all")
     public ResponseEntity<BasicResponseDTO<List<TiffinPlan>>> getAllTiffinPlan(){
         List<TiffinPlan> tiffinPlans=  tiffinPlanDAO.findAll();
-        return new ResponseEntity<>(new BasicResponseDTO<>(true, "Records", tiffinPlans), HttpStatus.CREATED);
+        return new ResponseEntity<>(new BasicResponseDTO<>(true, "Records", tiffinPlans), HttpStatus.OK);
     }
 
 }

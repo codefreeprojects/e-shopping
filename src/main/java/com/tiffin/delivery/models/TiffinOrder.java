@@ -12,7 +12,7 @@ import java.util.Date;
 public class TiffinOrder {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne(cascade = CascadeType.DETACH)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private TiffinPlan tiffinPlan;
     @OneToOne(cascade = CascadeType.DETACH)
     private User bookedBy;
