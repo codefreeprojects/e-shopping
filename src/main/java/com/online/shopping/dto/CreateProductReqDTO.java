@@ -14,5 +14,6 @@ public class CreateProductReqDTO {
     private Integer price;
     private String details;
     private String company;
+    private String quantity;
     private MultipartFile bannerImage;
 }

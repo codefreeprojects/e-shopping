@@ -51,6 +51,7 @@ public class AuthController {
         user.setFirstName(registerRequestDTO.getFirstName());
         user.setLastName(registerRequestDTO.getLastName());
         user.setEmail(registerRequestDTO.getEmail());
+        user.setMobileNumber(registerRequestDTO.getMobileNumber());
         user.setRole(registerRequestDTO.getRole());
         user.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
         user.setCreatedOn(new Date());

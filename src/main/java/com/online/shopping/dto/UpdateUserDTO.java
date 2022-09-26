@@ -11,5 +11,6 @@ public class UpdateUserDTO {
     private Long userId;
     private String firstName;
     private String lastName;
+    private String mobileNumber;
     private String password;
 }

@@ -49,6 +49,7 @@ public class UserService {
         User user = _user.get();
         user.setPassword(passwordEncoder.encode(r.getPassword()));
         user.setFirstName(r.getFirstName());
+        user.setMobileNumber(r.getMobileNumber());
         user.setLastName(r.getLastName());
         userDAO.save(user);
         return Optional.of(user);

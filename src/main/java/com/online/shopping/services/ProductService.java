@@ -48,6 +48,7 @@ public class ProductService {
         product.setCompany(reqDTO.getCompany());
         product.setDetails(reqDTO.getDetails());
         product.setType(reqDTO.getType());
+        product.setQuantity(reqDTO.getQuantity());
         product.setImageUrl(filePath+fileName.get());
         productDAO.save(product);
         return Optional.of(product);
