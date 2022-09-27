@@ -60,11 +60,16 @@ public class AdminController {
         return ResponseEntity.ok().body(responseDTO);
     }
     @Operation(summary = "Update product",security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping( "/product/update")
-    public ResponseEntity<BasicResponseDTO<Product>> updateProducts(@RequestBody Product r){
+    @PutMapping( value = "/product/update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<BasicResponseDTO<Product>> updateProducts(@ModelAttribute UpdateProductDTO r){
         BasicResponseDTO<Product> responseDTO = new BasicResponseDTO<>(true, "Products Updated", null);
-        Product product= productService.updateProduct(r);
-        responseDTO.setData(product);
+        Optional<Product> _product= productService.updateProduct(r);
+        if(_product.isEmpty()){
+            responseDTO.setMessage("Product not found or Image upload issue.");
+            responseDTO.setSuccess(false);
+            return ResponseEntity.ok().body(responseDTO);
+        }
+        responseDTO.setData(_product.get());
         return ResponseEntity.ok().body(responseDTO);
     }
 

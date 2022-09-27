@@ -4,6 +4,7 @@ import com.online.shopping.dao.*;
 import com.online.shopping.dto.CreateOrderReqDTO;
 import com.online.shopping.dto.CreateProductReqDTO;
 import com.online.shopping.dto.PaginationDTO;
+import com.online.shopping.dto.UpdateProductDTO;
 import com.online.shopping.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,9 +58,21 @@ public class ProductService {
     public Page<Product> getAllProducts(PaginationDTO req){
         return productDAO.findAll(PageRequest.of(req.getPage()-1,req.getSize() ));
     }
-    public Product updateProduct(Product product){
-         productDAO.save(product);
-         return product;
+    public Optional<Product> updateProduct(UpdateProductDTO reqDTO){
+        Optional<String> fileName = filesStorageService.save(reqDTO.getBannerImage());
+        if(fileName.isEmpty()) return Optional.empty();
+        Optional<Product> _product = productDAO.findById(reqDTO.getProductId());
+        if(_product.isEmpty()) return Optional.empty();
+        Product product = _product.get();
+        product.setName(reqDTO.getName());
+        product.setPrice(reqDTO.getPrice());
+        product.setCompany(reqDTO.getCompany());
+        product.setDetails(reqDTO.getDetails());
+        product.setType(reqDTO.getType());
+        product.setQuantity(reqDTO.getQuantity());
+        product.setImageUrl(filePath+fileName.get());
+        productDAO.save(product);
+        return Optional.of(product);
     }
 
     @Transactional
