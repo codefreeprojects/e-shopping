@@ -15,4 +15,5 @@ public class CreateOrderReqDTO {
     private PaymentDTO paymentDetails;
     private String address;
     private String pinCode;
+    private Long quantity;
 }

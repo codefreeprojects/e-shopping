@@ -15,6 +15,6 @@ public class UpdateProductDTO {
     private Integer price;
     private String details;
     private String company;
-    private String quantity;
+    private Long quantity;
     private MultipartFile bannerImage;
 }

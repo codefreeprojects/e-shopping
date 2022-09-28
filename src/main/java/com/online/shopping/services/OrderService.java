@@ -42,7 +42,16 @@ public class OrderService {
         }
 
         Payment payment = new Payment();
+        Product product = _product.get();
+        if(product.getQuantity() < req.getQuantity())
+            return Optional.empty();
+        Long pricePerKg = product.getPrice() / product.getQuantity();
+        Long updatedProdQnt = product.getQuantity() - req.getQuantity();
+        product.setQuantity(updatedProdQnt);
+        product.setPrice(Math.toIntExact(updatedProdQnt * pricePerKg));
+        productDAO.save(product);
         payment.setCreatedOn(new Date());
+        payment.setPrice(req.getQuantity() * pricePerKg);
         payment.setPaymentInfo(req.getPaymentDetails().getPaymentInfo());
         payment.setTransactionId(UUID.randomUUID().toString());
         payment.setPaymentMode(req.getPaymentDetails().getPaymentMode());
@@ -56,6 +65,7 @@ public class OrderService {
         productOrder.setPinCode(req.getPinCode());
         productOrder.setCreatedOn(new Date());
         productOrder.setOrderStatus(OrderStatus.PENDING);
+        productOrder.setQuantity(req.getQuantity());
         productOrderDAO.save(productOrder);
         return Optional.of(productOrder);
     }

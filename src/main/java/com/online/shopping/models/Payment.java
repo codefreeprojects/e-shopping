@@ -19,4 +19,5 @@ public class Payment {
     private String paymentMode;
     private String paymentInfo;
     private Date createdOn;
+    private Long price;
 }

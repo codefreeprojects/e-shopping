@@ -25,6 +25,7 @@ public class ProductOrder {
     private String address;
     private String pinCode;
     private OrderStatus orderStatus;
+    private Long quantity;
     private Date createdOn;
 
 

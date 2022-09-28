@@ -22,6 +22,6 @@ public class Product {
     private Integer price;
     private String details;
     private String company;
-    private String quantity;
+    private Long quantity;
     private String imageUrl;
 }
